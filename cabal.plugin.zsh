@@ -349,14 +349,36 @@ _cabal_upload ()
 
 _cabal_sandbox ()
 {
-    local -a cmds
-    cmds=(init delete add-source hc-pkg list-sources)
-    _arguments \
-        {-h,--help}'[Show help]' \
-        '--verbose[Control verbosity (n is 0–3, default verbosity level is 1)]'\
-        '--snapshot[Take a snapshot instead of creating a link]'\
-        '--sandbox=[Sandbox location (default: ./.cabal-sandbox]'\
-        '*::command:( $cmds )'
+    WORDS=()
+    for w in $words[1,(($CURRENT - 1))]; do
+        if [[ $w != -* ]]; then WORDS+=$w; fi
+    done
+    if (( $#WORDS == 1 )); then
+        _arguments \
+            {-h,--help}'[Show help]' \
+            '--verbose[Control verbosity (n is 0–3, default verbosity level is 1)]'\
+            '--snapshot[Take a snapshot instead of creating a link]'\
+            '--sandbox=[Sandbox location (default: ./.cabal-sandbox]'\
+            '*::command:_cabal_sandbox_command'
+    else
+        _arguments '*::command:_cabal_sandbox_command'
+    fi
+}
+
+_cabal_sandbox_command ()
+{
+    local -a _cabal_sandbox_cmds
+    _cabal_sandbox_cmds=(
+        "init:Initialize sandbox"
+        "delete:Delete the current sandbox"
+        "add-source:Add one or more directories to the current sandbox"
+        "delete-source:Remove one or more directories from the current sandbox"
+        "hc-pkg:Run the package manager (e.g. ghc-pkg) on the current sandbox package DB"
+        "list-sources:List source dependencies registered in the current sandbox"
+    )
+    if (( CURRENT == 1 )) then
+        _describe -t commands 'command' _cabal_sandbox_cmds || compadd "$@"
+    fi
 }
 
 _cabal_list_packages () {
