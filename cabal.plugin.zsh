@@ -11,6 +11,11 @@ _cabal ()
             {-h,--help}'[Show help]' \
             {-V,--version}'[Print version information]' \
             '--numeric-version[Print just the version number]' \
+            '--config-file=[Set an alternate location for the config file]' \
+            '--sandbox-config-file=[Set an alternate location for the sandbox config file]' \
+            '--require-sandbox[Enable requiring the presence of a sandbox for sandbox-aware commands]' \
+            '--no-require-sandbox[Disable requiring the presence of a sandbox for sandbox-aware commands]' \
+            '--ignore-sandbox[Ignore any existing sandbox]' \
             '*::command:_cabal_command'
     else
         _arguments '*::command:_cabal_command'
